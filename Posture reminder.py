@@ -9,7 +9,7 @@ root = tk.Tk()
 root.geometry('400x500')
 root.resizable(False, False)
 root.title('Posture reminder')
-#root.configure(bg="#e3e3cb")
+root.configure(bg="#d7e3fb")
 
 root.columnconfigure(0, weight = 2)
 root.rowconfigure(0, weight=2)
@@ -18,8 +18,11 @@ root.rowconfigure(2, weight=1)
 root.rowconfigure(3, weight=1)
 root.rowconfigure(4, weight=1)
 
-label1 = tk.Label(root, text="Posture reminder is now active")
+label1 = tk.Label(root, text="Posture reminder is now active!", bg="#d7e3fb", font = "bold" )
 label1.grid(row = 0)
+
+label2 = tk.Label(root, text="Choose time between reminders (in minutes):", bg="#d7e3fb")
+label2.grid(row = 2, sticky = "S")
 
 time_interv = tk.IntVar()
 time_interval = ttk.Combobox(root, textvariable = time_interv)
@@ -27,16 +30,14 @@ time_interval['values'] = (15, 20, 30, 45, 60)
 # Setting first option as default:
 time_interval.current(0)
 time_interval['state'] = 'readonly'
-time_interval.grid(row = 2)
+time_interval.grid(row = 3, sticky = "N")
 
+info_btn = tk.Button(root, text="How this app can help you", command=lambda: how_it_works(), bg="#d7e3fb")
+info_btn.grid(row = 4, sticky = "N")
 
-'''
-info_btn = tk.Button(root, text="How it works", command=lambda: how_it_works())
-info_btn.grid(row = 3)
+label3 = tk.Label(root, text="created by Adam Kotecki", bg="#d7e3fb")
+label3.grid(row = 5)
 
-credits_btn = tk.Button(root, text="Credits", command=lambda: credits())
-credits_btn.grid(row = 4)
-'''
 
 class Reminder(object):
     
@@ -52,26 +53,28 @@ class Reminder(object):
                         ,"You should avoid to overly arch your lower back as you straighten up. Lower back should have a small curve, which is called lordosis. Sitting with excessive low back arch often leads to hyperlordosis, also called anterior pelvis tilt. This spinal deformity is usually incurable. To provide support to the lower back, you can use small pillow or ergonomically designed chair."\
                         ,"Neck has to be straight while using phone. Be aware of your posture when using smartphone. The further your head and neck is extended forward and focused downward, the more your head will weigh, which can lead to neck and spine deformities. The higher you hold your phone, the less you slouch."]
     
-    def __init__(self, show_interval=3, hide_interval=6): #30
+    def __init__(self, show_interval=120, hide_interval=6): #30
         self.hide_int = hide_interval
         self.show_int = show_interval
         self.root = tk.Tk()
         self.root.geometry('400x500')
         self.root.resizable(False, False)
-        self.root.title('Reminder')
+        self.root.title('Reminder!')
         self.root.columnconfigure(0, weight = 2)
+        self.root["bg"] = "#f4a63a"
         #tk.Frame(self.root, width=250, height=100).pack()
+        time_interval.bind("<<ComboboxSelected>>", self.set_hide)
         
-        self.label1 = tk.Label(self.root, text = Reminder.title_list[Reminder.current_title])
+        self.label1 = tk.Message(self.root, text = Reminder.title_list[Reminder.current_title], width = 300, bg = "#f4a63a", font = 'bold')
         self.label1.grid(row=0, column=0, columnspan = 2)
         
         image = Image.open(Reminder.image_list[Reminder.current_image] + ".png")
-        img = image.resize((250, 250), Image.ANTIALIAS)
+        img = image.resize((300, 300), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img, master = self.root)
         self.label2 = tk.Label(self.root, image = img)
         self.label2.grid(row=1, column=0, columnspan = 2)
         
-        self.label3 = tk.Label(self.root, text = Reminder.description_list[Reminder.current_description])
+        self.label3 = tk.Message(self.root, text = Reminder.description_list[Reminder.current_description], width = 300, bg = "#f4a63a", justify = tk.LEFT)
         self.label3.grid(row=2, column=0, columnspan = 2)
         
         self.root.after_idle(self.show)
@@ -86,7 +89,7 @@ class Reminder(object):
             Reminder.current_title = 0
             Reminder.current_description = 0
         image = Image.open(Reminder.image_list[Reminder.current_image] + ".png")
-        img = image.resize((250, 250), Image.ANTIALIAS)
+        img = image.resize((300, 300), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img, master = self.root)
         self.label1.configure(text = Reminder.title_list[Reminder.current_title])
         self.label2.configure(image= img)
@@ -102,24 +105,28 @@ class Reminder(object):
         self.root.deiconify()
         self.root.after(1000 * self.show_int, self.hide)
         
-    def set_show(self, event):
-        pass
-        # updated = event.widget.get()
-        # self.show_int = int(updated)
-        # print(self.show_int)
+    def set_hide(self, event):
+        print("selection changed")
+        updated = int(event.widget.get())
+        if updated == 15:
+            seconds = 900
+        if updated == 20:
+            seconds = 1200
+        if updated == 30:
+            seconds = 1800
+        if updated == 45:
+            seconds = 2700
+        if updated == 60:
+            seconds = 3600
+        self.hide_int = seconds
         
-    # combobox selection change
-    # time_interval.bind("<<ComboboxSelected>>", set_show)
-
-
+        
 r = Reminder()
 
 
 def how_it_works():
     pass
 
-def credits():
-    pass
 
 
 root.mainloop()
