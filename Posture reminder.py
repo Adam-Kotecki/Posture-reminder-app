@@ -1,28 +1,33 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.messagebox import showinfo
-import random
+# from tkinter.messagebox import showinfo
 from PIL import ImageTk, Image
 
 root = tk.Tk()
 
 root.geometry('400x500')
 root.resizable(False, False)
-root.title('Posture reminder')
-root.configure(bg="#d7e3fb")
+root.title('Posture awareness reminder')
+root.configure(bg="#b4eaf9")
 
 root.columnconfigure(0, weight = 2)
-root.rowconfigure(0, weight=2)
+root.rowconfigure(0, weight=1)
 root.rowconfigure(1, weight=4)
 root.rowconfigure(2, weight=1)
 root.rowconfigure(3, weight=1)
 root.rowconfigure(4, weight=1)
 
-label1 = tk.Label(root, text="Posture reminder is now active!", bg="#d7e3fb", font = "bold" )
+label1 = tk.Label(root, text="The application is now active", bg="#b4eaf9", font = ("TkDefaultFont", 9, "bold") )
 label1.grid(row = 0)
 
-label2 = tk.Label(root, text="Choose time between reminders (in minutes):", bg="#d7e3fb")
-label2.grid(row = 2, sticky = "S")
+image1 = Image.open("posture awareness title.png")
+img = image1.resize((300, 300), Image.ANTIALIAS)
+img = ImageTk.PhotoImage(img)
+label2 = tk.Label(image = img)
+label2.grid(row = 1)
+
+label3 = tk.Label(root, text="Choose time between reminders (in minutes):", bg="#b4eaf9")
+label3.grid(row = 2, sticky = "S")
 
 time_interv = tk.IntVar()
 time_interval = ttk.Combobox(root, textvariable = time_interv)
@@ -32,11 +37,15 @@ time_interval.current(0)
 time_interval['state'] = 'readonly'
 time_interval.grid(row = 3, sticky = "N")
 
-info_btn = tk.Button(root, text="How this app can help you", command=lambda: how_it_works(), bg="#d7e3fb")
+info_btn = tk.Button(root, text="How this app can help me?", command=lambda: how_it_works(), bg="#b4eaf9")
 info_btn.grid(row = 4, sticky = "N")
 
-label3 = tk.Label(root, text="created by Adam Kotecki", bg="#d7e3fb")
-label3.grid(row = 5)
+def how_it_works():
+    tk.messagebox.showinfo(title = "How this app can help me?", message = "The purpose of the application is to get you into the habit of correct posture. The app will not do the work for you. You need to develop your postural awareness until reminders are no longer needed.")
+
+
+label4 = tk.Label(root, text="created by Adam Kotecki", bg="#b4eaf9", font = ("TkDefaultFont", 8))
+label4.grid(row = 5)
 
 
 class Reminder(object):
@@ -53,7 +62,7 @@ class Reminder(object):
                         ,"You should avoid to overly arch your lower back as you straighten up. Lower back should have a small curve, which is called lordosis. Sitting with excessive low back arch often leads to hyperlordosis, also called anterior pelvis tilt. This spinal deformity is usually incurable. To provide support to the lower back, you can use small pillow or ergonomically designed chair."\
                         ,"Neck has to be straight while using phone. Be aware of your posture when using smartphone. The further your head and neck is extended forward and focused downward, the more your head will weigh, which can lead to neck and spine deformities. The higher you hold your phone, the less you slouch."]
     
-    def __init__(self, show_interval=120, hide_interval=6): #30
+    def __init__(self, show_interval = 120, hide_interval = 900):
         self.hide_int = hide_interval
         self.show_int = show_interval
         self.root = tk.Tk()
@@ -77,7 +86,8 @@ class Reminder(object):
         self.label3 = tk.Message(self.root, text = Reminder.description_list[Reminder.current_description], width = 300, bg = "#f4a63a", justify = tk.LEFT)
         self.label3.grid(row=2, column=0, columnspan = 2)
         
-        self.root.after_idle(self.show)
+        #self.root.after_idle(self.show)
+        self.hide()
         self.root.mainloop()
         
     def next_image(self):
@@ -106,7 +116,6 @@ class Reminder(object):
         self.root.after(1000 * self.show_int, self.hide)
         
     def set_hide(self, event):
-        print("selection changed")
         updated = int(event.widget.get())
         if updated == 15:
             seconds = 900
@@ -120,14 +129,6 @@ class Reminder(object):
             seconds = 3600
         self.hide_int = seconds
         
-        
 r = Reminder()
 
-
-def how_it_works():
-    pass
-
-
-
 root.mainloop()
-
